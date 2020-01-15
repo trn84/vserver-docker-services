@@ -1,0 +1,45 @@
+---
+version: '3.3'
+
+services:
+  wordpress-db:
+    image: mariadb:10.3
+    container_name: wordpress-db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=HEREPASSWORD1 # Set password
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=HEREPASSWORD2 # Set password
+    volumes:
+      - $PWD/database:/var/lib/mysql
+    networks:
+      - wordpress-internal
+
+  wordpress-app:
+    image: wordpress:latest
+    container_name: wordpress-app
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=wordpress-db:3306
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=HEREPASSWORD2 # Set password
+      - WORDPRESS_DB_NAME=wordpress
+    labels:
+      - "traefik.backend=wordpress"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:WORDPRESS.DOMAIN.COM" # Set domain
+      - "traefik.port=80"
+      - "traefik.docker.network=traefik_proxy"
+    volumes:
+      - $PWD/app:/var/www/html/wp-content
+    networks:
+      - traefik_proxy
+      - wordpress-internal
+
+networks:
+  wordpress-internal:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+

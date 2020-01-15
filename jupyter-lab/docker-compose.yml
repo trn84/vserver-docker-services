@@ -1,0 +1,26 @@
+---
+version: "2"
+services:
+  jupyter:
+    image: jupyter/datascience-notebook
+    container_name: jupyter
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - JUPYTER_ENABLE_LAB=yes
+    labels:
+      - "traefik.backend=jupyter"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:JUPY.DOMAIN.COM" # Set domain
+      - "traefik.port=8888"
+      - "traefik.docker.network=traefik_proxy"
+    volumes:
+      - $PWD/workspace:/workspace
+    networks:
+      - traefik_proxy
+    command: start-notebook.sh --ip=0.0.0.0 --NotebookApp.password=sha1:HASH # Set password hash
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy

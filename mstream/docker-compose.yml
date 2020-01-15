@@ -1,0 +1,31 @@
+---
+version: "2"
+services:
+  mstream:
+    image: linuxserver/mstream
+    container_name: mstream
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - USER=admin
+      - PASSWORD=HEREPASSWORD1 # Set password
+      - USE_JSON=true
+      - TZ=Europe/Berlin
+    labels:
+      - "traefik.backend=mstream"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:MSTREAM.DOMAIN.COM" # Set domain
+      - "traefik.port=3000"
+      - "traefik.docker.network=traefik_proxy"
+    volumes:
+      - $PWD/config:/config
+      - $PWD/music:/music
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+

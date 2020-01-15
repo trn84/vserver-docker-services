@@ -1,0 +1,33 @@
+logLevel = "ERROR"
+defaultEntryPoints = ["http", "https"]
+insecureSkipVerify = true
+
+[web]
+address = ":8080"
+  [web.auth.basic]
+  users = ["DASHBOARD_USER:HASH"]
+
+[docker]
+domain = "YOURDOMAIN.COM"
+watch = true
+exposedbydefault = false
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+# Let's encrypt configuration
+[acme]
+  email="email@email.com"
+  storage="/etc/traefik/ACME/acme.json"
+  entryPoint="https"
+  acmeLogging=true
+  OnHostRule=true
+  caServer = "https://acme-v02.api.letsencrypt.org/directory"
+    [acme.httpChallenge]
+    entryPoint = "http"
