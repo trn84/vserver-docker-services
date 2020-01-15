@@ -1,4 +1,4 @@
-# vServer Docker Service Tutorial
+# vServer Docker Services Tutorial
 ![](microservices.png)
 
 This is the repository for my article on medium.com for setting up various services like:
